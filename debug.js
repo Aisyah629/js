@@ -1,4 +1,4 @@
-console.log('%c[DEBUG] Page Load Timing', 'color: #00bcd4; font-weight: bold; font-size: 16px; background: #000; padding: 8px; border-radius: 6px;');
+console.log('%cPage Load Timing', 'color: #00bcd4; font-weight: bold; font-size: 16px; background: #000; padding: 8px; border-radius: 6px;');
 
     if (performance && performance.timing) {
         const t = performance.timing;
@@ -29,8 +29,7 @@ console.log('%c[DEBUG] Page Load Timing', 'color: #00bcd4; font-weight: bold; fo
         console.log('User ID:', window.PanelUser.uuid || 'N/A');
         console.log('Username:', window.PanelUser.username || window.PanelUser.name || 'N/A');
         console.log('Email:', window.PanelUser.email || 'N/A');
-        console.log('Root Admin:', window.PanelUser.root_admin ? '%cYES (Full Access)' : '%cNo', window.PanelUser.root_admin ? 'color: #4caf50; font-weight: bold;' : 'color: #ff5722;');
-        console.log('2FA Enabled:', window.PanelUser.use_totp ? 'Yes' : 'No');
+        console.log(`Root Admin: %c${window.PanelUser.root_admin ? 'YES (Full Access)' : 'No'}`, window.PanelUser.root_admin ? 'color: #4caf50; font-weight: bold;' : 'color: #ff5722; font-weight: bold;');      console.log('2FA Enabled:', window.PanelUser.use_totp ? 'Yes' : 'No');
     } else {
         console.log('%c✗ USER NOT LOGGED IN (Guest)', 'color: #fff; background: #ff5722; padding: 8px 12px; border-radius: 6px; font-weight: bold; font-size: 14px;');
         console.log('window.PanelUser:', window.PanelUser || 'undefined / empty');
@@ -69,5 +68,5 @@ console.log('%c[DEBUG] Page Load Timing', 'color: #00bcd4; font-weight: bold; fo
         console.log('%c✗ #particles-js missing', 'color: #f44336; font-weight: bold;');
     }
     window.addEventListener('load', () => {
-        console.log('%c[DEBUG] All assets fully loaded (JS, CSS, images)', 'color: #00ff00; font-weight: bold; font-size: 14px;');
+        console.log('%cAll assets fully loaded (JS, CSS, images)', 'color: #00ff00; font-weight: bold; font-size: 14px;');
     });
