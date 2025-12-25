@@ -46,7 +46,7 @@ console.log('%c[DEBUG] Page Load Timing', 'color: #00bcd4; font-weight: bold; fo
             const el = document.querySelector(selector);
             if (el) {
                 console.log('%c✓ React Root Element Found:', 'color: #8bc34a; font-weight: bold;', selector);
-                {{-- console.log('Element:', el); --}}
+                //console.log('Element:', el);
 
                 if (el.hasChildNodes() || el.innerHTML.trim().length > 0) {
                     console.log('%c✓ React App Rendered (content visible)', 'color: #4caf50; font-weight: bold;');
