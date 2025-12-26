@@ -1,0 +1,240 @@
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    darkMode: 'class',
+  }
+</script>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+<div id="botcahx-chat-container" class="fixed bottom-5 right-5 z-50">
+  <!-- Floating Button -->
+  <button
+    id="botcahx-chat-button"
+    class="w-16 h-16 bg-gray-900 hover:bg-black text-white rounded-full shadow-2xl flex items-center justify-center transition-all duration-300 hover:scale-110 focus:outline-none ring-4 ring-gray-700/50"
+    aria-label="Buka Chat BOTCAHX Assistant"
+  >
+    <i class="fas fa-headset text-3xl"></i>
+  </button>
+
+  <div
+    id="botcahx-chat-box"
+    class="hidden fixed inset-0 md:inset-auto md:bottom-24 md:right-5 md:w-96 md:max-w-[calc(100vw-2.5rem)] md:h-[620px] bg-gray-900 rounded-none md:rounded-3xl shadow-2xl flex flex-col overflow-hidden transition-all duration-500 origin-bottom-right md:origin-bottom-right scale-0"
+  >
+    <div class="bg-black text-white p-5 md:p-6 flex justify-between items-center shrink-0 border-b border-gray-800">
+      <div class="flex items-center space-x-4">
+        <div class="w-12 h-12 bg-gray-800 rounded-full flex items-center justify-center">
+          <i class="fas fa-robot text-2xl text-gray-400"></i>
+        </div>
+        <div>
+          <h3 class="font-bold text-xl tracking-wider">Ucup Assistant</h3>
+          <p class="text-sm text-gray-400">Support Resmi • Online 24/7</p>
+        </div>
+      </div>
+      <div class="flex items-center space-x-2">
+        <button id="botcahx-new-session" class="text-gray-400 hover:text-white hover:bg-gray-800 rounded-full p-3 transition" title="Sesi Baru">
+          <i class="fas fa-sync-alt"></i>
+        </button>
+        <button id="botcahx-close-btn" class="text-gray-400 hover:text-white hover:bg-gray-800 rounded-full p-3 transition">
+          <i class="fas fa-times text-2xl"></i>
+        </button>
+      </div>
+    </div>
+
+    <div id="botcahx-messages" class="flex-1 overflow-y-auto p-5 space-y-5 bg-gray-900"></div>
+
+    <div class="p-4 md:p-5 bg-black border-t border-gray-800 shrink-0">
+      <div class="flex items-center space-x-3">
+        <input
+          type="text"
+          id="botcahx-user-input"
+          placeholder="Ketik pesan kamu di sini..."
+          class="flex-1 px-6 py-4 bg-gray-800 rounded-3xl focus:outline-none focus:ring-4 focus:ring-gray-600 text-white placeholder-gray-500 text-base"
+          autocomplete="off"
+        />
+        <button
+          id="botcahx-send-btn"
+          class="w-14 h-14 bg-gray-800 hover:bg-white hover:text-black text-white rounded-full flex items-center justify-center transition hover:shadow-xl focus:outline-none"
+          title="Kirim pesan"
+        >
+          <i class="fas fa-paper-plane text-xl"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.documentElement.classList.add('dark');
+
+  const chatButton = document.getElementById('botcahx-chat-button');
+  const chatBox = document.getElementById('botcahx-chat-box');
+  const closeBtn = document.getElementById('botcahx-close-btn');
+  const newSessionBtn = document.getElementById('botcahx-new-session');
+  const messagesDiv = document.getElementById('botcahx-messages');
+  const userInput = document.getElementById('botcahx-user-input');
+  const sendBtn = document.getElementById('botcahx-send-btn');
+
+  let conversationHistory = [];
+
+  const systemPrompt = {
+    role: "system",
+    content: `Kamu adalah BOTCAHX Assistant, AI support resmi panel BOTCAHX – hosting bot gratis & premium (termasuk WhatsApp bot, Discord bot, dll) di https://botcahx.64-b.it.
+
+Tugas utama: Bantu user dari nol sampai server/bot aktif.
+
+Link penting:
+- Panel utama: https://botcahx.64-b.it
+- Profile/Akun: https://botcahx.64-b.it/account
+- Store: https://botcahx.64-b.it/store
+- Resources: https://botcahx.64-b.it/store/resources
+- Credits/Balance: https://botcahx.64-b.it/store/credits
+- Create Server: https://botcahx.64-b.it/store/create
+- Support Ticket: https://botcahx.64-b.it/tickets
+- Login: https://botcahx.64-b.it/auth/login
+- Logout: https://botcahx.64-b.it/auth/logout
+- Forgot Password: https://botcahx.64-b.it/auth/password
+- Register: https://botcahx.64-b.it/auth/register
+- Security: https://botcahx.64-b.it/account/security
+- Referrals: https://botcahx.64-b.it/account/referrals
+- API token: https://botcahx.64-b.it/account/api
+- SSH Key: https://botcahx.64-b.it/account/ssh
+- Coupons: https://botcahx.64-b.it/account/coupons
+
+Selalu ramah, jelas, dan beri langkah bernomor (1, 2, 3...).
+
+Mulai dengan tanya: "Mau buat server/bot baru ya? Sudah punya akun belum?"
+
+Panduan utama:
+1. Daftar/login di https://botcahx.64-b.it
+2. Cek balance/resources di store
+3. Buat server baru di https://botcahx.64-b.it/store/create
+4. Pilih egg/location yang sesuai
+5. Konfigurasi startup (token, dll)
+6. Start server & test bot
+
+Ingatkan: Jangan share token bot. Butuh bantuan error? Minta screenshot atau pesan error.
+
+Akhiri respons dengan: "Sudah sampai mana? Ada yang bingung?"`
+  };
+
+  function renderMarkdown(text) {
+    return text
+      .replace(/```([\s\S]*?)```/g, '<pre class="bg-black text-green-400 p-4 rounded-2xl my-4 overflow-x-auto font-mono text-sm border border-gray-800"><code>$1</code></pre>')
+      .replace(/`([^`]+)`/g, '<code class="bg-gray-800 px-2 py-1 rounded text-sm font-mono">$1</code>')
+      .replace(/\*\*(.*?)\*\*/g, '<strong class="font-bold">$1</strong>')
+      .replace(/\*([^\*\s][^\*]*?[^\*\s])\*/g, '<em class="italic">$1</em>')
+      .replace(/(https?:\/\/[^\s<]+[^\s<.,!?])/g, '<a href="$1" target="_blank" class="text-gray-400 underline hover:text-white">$1</a>')
+      .replace(/\n/g, '<br>');
+  }
+
+  function addMessage(text, sender) {
+    const msgDiv = document.createElement('div');
+    msgDiv.className = sender === 'user'
+      ? 'ml-auto max-w-[85%] bg-gray-800 text-white rounded-3xl rounded-br-md px-6 py-4 shadow-xl'
+      : 'mr-auto max-w-[85%] bg-gray-950 text-gray-200 rounded-3xl rounded-bl-md px-6 py-4 shadow';
+
+    msgDiv.innerHTML = renderMarkdown(text);
+    messagesDiv.appendChild(msgDiv);
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+  }
+
+  function addWelcomeMessage() {
+    addMessage(
+      "Halo! 👋<br>Saya <strong>Ucup Assistant</strong>, support resmi panel Ucup.<br>",
+      'bot'
+    );
+  }
+
+  chatButton.addEventListener('click', () => {
+    chatBox.classList.remove('hidden', 'scale-0');
+    chatBox.classList.add('scale-100');
+    if (messagesDiv.children.length === 0) addWelcomeMessage();
+    userInput.focus();
+  });
+
+  closeBtn.addEventListener('click', () => {
+    chatBox.classList.add('scale-0');
+    setTimeout(() => chatBox.classList.add('hidden'), 400);
+  });
+
+  newSessionBtn.addEventListener('click', () => {
+    if (confirm('Mulai sesi chat baru? Riwayat percakapan akan dihapus.')) {
+      messagesDiv.innerHTML = '';
+      conversationHistory = [];
+      addWelcomeMessage();
+    }
+  });
+
+  async function sendMessage() {
+    const userText = userInput.value.trim();
+    if (!userText) return;
+
+    addMessage(userText, 'user');
+    userInput.value = '';
+
+    const typing = document.createElement('div');
+    typing.className = 'mr-auto flex items-center space-x-2 text-sm text-gray-500';
+    typing.innerHTML = `
+      <div class="w-2 h-2 bg-gray-500 rounded-full animate-bounce"></div>
+      <div class="w-2 h-2 bg-gray-500 rounded-full animate-bounce delay-100"></div>
+      <div class="w-2 h-2 bg-gray-500 rounded-full animate-bounce delay-200"></div>
+      <span>Sedang mengetik...</span>
+    `;
+    messagesDiv.appendChild(typing);
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+
+    conversationHistory.push({ role: "user", content: userText });
+
+    try {
+      const response = await fetch('https://aichat-api.vercel.app/chatgpt', {
+        method: 'POST',
+        headers: {
+          'accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          messages: [systemPrompt, ...conversationHistory]
+        })
+      });
+
+      const data = await response.json();
+      messagesDiv.removeChild(typing);
+
+      if (data.error) {
+        addMessage('Error: ' + data.error, 'bot');
+      } else {
+        addMessage(data.content, 'bot');
+        conversationHistory.push({ role: "assistant", content: data.content });
+      }
+    } catch (err) {
+      messagesDiv.removeChild(typing);
+      addMessage('Gagal terhubung ke server. Silakan coba lagi dalam beberapa detik.', 'bot');
+    }
+  }
+
+  sendBtn.addEventListener('click', sendMessage);
+  userInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') sendMessage();
+  });
+</script>
+
+<style>
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+  }
+  .delay-100 { animation-delay: 0.1s; }
+  .delay-200 { animation-delay: 0.2s; }
+
+  #botcahx-messages::-webkit-scrollbar {
+    width: 6px;
+  }
+  #botcahx-messages::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  #botcahx-messages::-webkit-scrollbar-thumb {
+    background: rgba(55, 65, 81, 0.6);
+    border-radius: 3px;
+  }
+</style>
