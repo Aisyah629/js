@@ -1,0 +1,6 @@
+  @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+  .delay-100 { animation-delay: 0.1s; }
+  .delay-200 { animation-delay: 0.2s; }
+  #botcahx-messages::-webkit-scrollbar { width: 6px; }
+  #botcahx-messages::-webkit-scrollbar-track { background: transparent; }
+  #botcahx-messages::-webkit-scrollbar-thumb { background: rgba(55,65,81,0.6); border-radius: 3px; }
